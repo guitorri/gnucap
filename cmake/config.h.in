@@ -1,0 +1,19 @@
+/* Define to the version of this package. */
+#define PACKAGE_VERSION @VERSION@
+
+/* Define to 1 if this was built from a Git repository. */
+#cmakedefine HAVE_GIT_REPO 1
+
+/* If built from a Git repository, define commit, branch, and tag. */
+#cmakedefine GIT_COMMIT "@GIT_COMMIT@"
+#cmakedefine GIT_BRANCH "@GIT_BRANCH@"
+#cmakedefine GIT_TAG "@GIT_TAG@"
+
+/* Define to 1 if you have the 'dl' library (-ldl). */
+#cmakedefine HAVE_LIBDL 1
+
+/* Define to 1 if you have the `readline' library (-lreadline). */
+#cmakedefine HAVE_LIBREADLINE 1
+
+/* Define to 1 if you have the `termcap' library (-ltermcap). */
+#cmakedefine HAVE_LIBTERMCAP 1
