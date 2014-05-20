@@ -56,6 +56,6 @@ add_library(gnucap SHARED
     u_xprobe.cc
 )
 
-target_link_libraries(gnucap ${READLINE_LIBS})
+target_link_libraries(gnucap ${DL_LIBRARIES} ${READLINE_LIBS})
 
 install(TARGETS gnucap DESTINATION ${CMAKE_INSTALL_LIBDIR})
