@@ -63,6 +63,7 @@ include_directories(include)
 
 # Build in subdirectories.
 add_subdirectory(apps)
+add_subdirectory(include)
 add_subdirectory(lib)
 add_subdirectory(main)
 add_subdirectory(modelgen)
