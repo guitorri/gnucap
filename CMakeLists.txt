@@ -61,6 +61,11 @@ configure_file(
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(include)
 
+# Always install with full RPATH.
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/gnucap")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Build in subdirectories.
 add_subdirectory(apps)
 add_subdirectory(include)
