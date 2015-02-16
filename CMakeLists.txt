@@ -66,6 +66,11 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
     "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/gnucap")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+# BUG: fail to build with libc++ (default after OSX 10.6)
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libstdc++")
+endif ()
+
 # Build in subdirectories.
 add_subdirectory(apps)
 add_subdirectory(include)
