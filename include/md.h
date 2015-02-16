@@ -86,7 +86,11 @@ enum {
 #else
 #define	ENDDIR		"/"
 #define PATHSEP		':'
+#if defined(__APPLE__)
+#define DEFAULT_PLUGINS "libgnucap-default-plugins.dylib"
+#else
 #define DEFAULT_PLUGINS "libgnucap-default-plugins.so"
+#endif
 #define SYSTEMSTARTFILE	"gnucap.rc"
 #define SYSTEMSTARTPATH	OS::getenv("PATH")
 #define USERSTARTFILE	".gnucaprc"
