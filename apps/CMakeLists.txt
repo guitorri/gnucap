@@ -78,5 +78,7 @@ add_library(gnucap-default-plugins SHARED
     ${MODEL_SOURCES}
 )
 
+target_link_libraries(gnucap-default-plugins gnucap)
+
 install(TARGETS gnucap-default-plugins
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/gnucap")
