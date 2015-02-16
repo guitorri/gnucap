@@ -61,10 +61,17 @@ configure_file(
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(include)
 
-# Always install with full RPATH.
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
-    "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/gnucap")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+# Always build and install with full RPATH.
+option(ENABLE_RPATH "Enable rpath support on Linux and Mac" ON)
+if(UNIX AND ENABLE_RPATH)
+  message(STATUS "RPath support enabled for installed binaries and libraries")
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  if(APPLE)
+    set(CMAKE_INSTALL_NAME_DIR "@executable_path/../lib")
+  endif()
+endif()
 
 # BUG: fail to build with libc++ (default after OSX 10.6)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
