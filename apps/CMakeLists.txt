@@ -82,8 +82,8 @@ add_library(gnucap-default-plugins SHARED
 set_target_properties(gnucap-default-plugins PROPERTIES PREFIX "")
 
 # Leave symbols (from gnucap-default-plugins) to be defined at runtime
-if(APPLE)
-  SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -flat_namespace -single_module -undefined dynamic_lookup")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  SET(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS} -undefined dynamic_lookup")
 endif()
 
 install(TARGETS gnucap-default-plugins
