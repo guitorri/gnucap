@@ -75,7 +75,7 @@ enum {
 #if defined(__WIN32__)
 #define	ENDDIR		"/\\"
 #define PATHSEP		';'
-#define DEFAULT_PLUGINS "libgnucap-default-plugins.dll"
+#define DEFAULT_PLUGINS "gnucap-default-plugins.dll"
 #define SYSTEMSTARTFILE	"gnucap.rc"
 #define SYSTEMSTARTPATH	OS::getenv("PATH")
 #define USERSTARTFILE	"gnucap.rc"
@@ -87,9 +87,9 @@ enum {
 #define	ENDDIR		"/"
 #define PATHSEP		':'
 #if defined(__APPLE__)
-#define DEFAULT_PLUGINS "libgnucap-default-plugins.dylib"
+#define DEFAULT_PLUGINS "gnucap-default-plugins.dylib"
 #else
-#define DEFAULT_PLUGINS "libgnucap-default-plugins.so"
+#define DEFAULT_PLUGINS "gnucap-default-plugins.so"
 #endif
 #define SYSTEMSTARTFILE	"gnucap.rc"
 #define SYSTEMSTARTPATH	OS::getenv("PATH")
