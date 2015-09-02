@@ -32,3 +32,6 @@ dist_bin_SCRIPTS = gnucap-conf
 gnucap_real_SOURCES = main.cc
 gnucap_real_LDADD = ../lib/libgnucap.la
 gnucap_real_CPPFLAGS = -I$(top_builddir)/include -I$(top_srcdir)/include $(AM_CPPFLAGS)
+gnucap_real_LDFLAGS = $(AM_LDFLAGS) $(LIBGNUCAP_LDFLAGS)
+
+

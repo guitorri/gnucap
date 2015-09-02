@@ -170,8 +170,21 @@ if test "x$GCC" = "xyes" -a "$enable_debug" = "yes"; then
 	done
 fi
 
-# exports symbols to plugins
-LDFLAGS="$LDFLAGS -rdynamic"
+# set symbols export and loader flags according to platform
+AC_CANONICAL_HOST
+case $host_os in
+  *linux*)
+    GNUCAP_LDFLAGS="-Wl,-rpath,${pkglibdir}"
+    LIBGNUCAP_LDFLAGS="$LDFLAGS -rdynamic -Wl,--enable-new-dtags -Wl,-rpath,${pkglibdir}"
+    ;;
+  *darwin*)
+    GNUCAP_LDFLAGS="-Wl,-rpath,${pkglibdir}"
+    LIBGNUCAP_LDFLAGS="$LDFLAGS -dynamiclib -Wl,-rpath,${pkglibdir}"
+    ;;
+esac
+AC_SUBST(GNUCAP_LDFLAGS)
+AC_SUBST(LIBGNUCAP_LDFLAGS)
+
 
 # workaround, as we don't want to know the names literally
 AC_CONFIG_SUBDIRS()

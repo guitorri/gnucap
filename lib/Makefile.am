@@ -25,7 +25,8 @@
 
 lib_LTLIBRARIES = libgnucap.la
 libgnucap_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/include -I$(top_builddir)/include
-libgnucap_la_LDFLAGS = $(AM_LDFLAGS) -Wl,--enable-new-dtags -Wl,-rpath -Wl,${pkglibdir}
+libgnucap_la_LDFLAGS = $(AM_LDFLAGS) $(LIBGNUCAP_LDFLAGS)
+
 libgnucap_la_SOURCES = \
 globals.cc \
 m_expression_dump.cc m_expression_in.cc m_expression_reduce.cc \
