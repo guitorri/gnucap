@@ -99,5 +99,13 @@ checkin:
 	$(MAKE) date
 	-git commit -a
 
+# required for the review process
+install-debug:
+	cp include/* /usr/local/include/gnucap
+	cp lib/O-DEBUG/libgnucap.so /usr/local/lib
+	cp apps/O-DEBUG/gnucap-default-plugins.so /usr/local/lib
+	cp main/O-DEBUG/gnucap /usr/local/bin
+	cp modelgen/O-DEBUG/gnucap-modelgen /usr/local/bin
+
 nothing:
 
