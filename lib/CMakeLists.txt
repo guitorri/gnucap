@@ -44,7 +44,6 @@ add_library(gnucap SHARED
     m_fft.cc
     m_spline.cc
     plot.cc
-    u_function.cc
     u_lang.cc
     u_nodemap.cc
     u_opt1.cc
