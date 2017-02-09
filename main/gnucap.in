@@ -1,0 +1,4 @@
+#!/bin/sh
+dir=`dirname $0`
+export LD_LIBRARY_PATH=$dir/../apps/.libs
+$dir/gnucap.real $*

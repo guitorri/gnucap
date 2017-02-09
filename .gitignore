@@ -1,0 +1,51 @@
+# output files
+/main/gnucap
+/gnucap-conf
+/gnucap*.tar.gz
+/modelgen/gnucap-modelgen
+
+# intermediate files
+*.o
+*.lo
+*.la
+.libs
+.deps
+/config.h
+/include/patchlev.h
+
+# build system
+/aclocal.m4
+/m4
+/missing
+/libtool
+/install-sh
+/ltmain.sh
+/configure
+/config.status
+/config.log
+/config.sub
+/config.guess
+/config.h.in
+/stamp-h1
+/depcomp
+/autom4te.cache
+/GNUmakefile
+/GNUmakefile.in
+Makefile.in
+Makefile
+!/Makefile
+
+# misc
+/extern
+!/extern/README
+
+# built sources
+apps/d_mos*.h
+apps/d_mos*.cc
+apps/d_diode.h
+apps/d_diode.cc
+apps/d_bjt.h
+apps/d_bjt.cc
+
+# backups
+*~

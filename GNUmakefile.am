@@ -1,0 +1,14 @@
+## $Id$
+##
+## Top level automake file for gnucap
+ACLOCAL_AMFLAGS = -Im4
+
+SUBDIRS=	include lib modelgen main apps tests
+
+EXTRA_DIST=	bootstrap Makefile.template configure.static
+
+# dist_bin_SCRIPTS = gnucap.mk
+
+# this is required to set ACLOCAL_AMFLAGS for libtoolize
+# (libtoolize does not know about GNUmakefile.am)
+EXTRA_DIST+= Makefile.am

@@ -1,4 +1,4 @@
-/*$Id: lang_spectre.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: lang_spectre.cc 2016/09/17  $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -19,11 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+//testing=script 2015.01.27
 #include "globals.h"
 #include "c_comand.h"
 #include "d_dot.h"
 #include "d_coment.h"
-#include "d_subckt.h"
+#include "e_subckt.h"
 #include "e_model.h"
 #include "u_lang.h"
 /*--------------------------------------------------------------------------*/
@@ -31,28 +32,29 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class LANG_SPECTRE : public LANGUAGE {
 public:
-  ~LANG_SPECTRE() {itested();}
+  LANG_SPECTRE()  {}
+  ~LANG_SPECTRE() {}
   std::string name()const {return "spectre";}
   bool case_insensitive()const {return false;}
   UNITS units()const {return uSI;}
 
 public: // override virtual, used by callback
-  std::string arg_front()const {return " ";}
-  std::string arg_mid()const {return "=";}
-  std::string arg_back()const {return "";}
+  std::string arg_front()const {unreachable();return " ";}
+  std::string arg_mid()const {unreachable();return "=";}
+  std::string arg_back()const {unreachable();return "";}
 
 public: // override virtual, called by commands
   void		parse_top_item(CS&, CARD_LIST*);
   DEV_COMMENT*	parse_comment(CS&, DEV_COMMENT*);
   DEV_DOT*	parse_command(CS&, DEV_DOT*);
   MODEL_CARD*	parse_paramset(CS&, MODEL_CARD*);
-  MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
+  BASE_SUBCKT*	parse_module(CS&, BASE_SUBCKT*);
   COMPONENT*	parse_instance(CS&, COMPONENT*);
   std::string	find_type_in_string(CS&);
 
 private: // override virtual, called by print_item
   void print_paramset(OMSTREAM&, const MODEL_CARD*);
-  void print_module(OMSTREAM&, const MODEL_SUBCKT*);
+  void print_module(OMSTREAM&, const BASE_SUBCKT*);
   void print_instance(OMSTREAM&, const COMPONENT*);
   void print_comment(OMSTREAM&, const DEV_COMMENT*);
   void print_command(OMSTREAM& o, const DEV_DOT* c);
@@ -101,15 +103,15 @@ static void parse_ports(CS& cmd, COMPONENT* x)
 {
   assert(x);
 
+  int index = 0;
   if (cmd >> '(') {
-    int index = 0;
     while (cmd.is_alnum()) {
       unsigned here = cmd.cursor();
       try{
 	std::string value;
 	cmd >> value;
 	x->set_port_by_index(index++, value);
-      }catch (Exception_Too_Many& e) {untested();
+      }catch (Exception_Too_Many& e) {
 	cmd.warn(bDANGER, here, e.message());
       }
     }
@@ -120,17 +122,23 @@ static void parse_ports(CS& cmd, COMPONENT* x)
     unsigned stop = cmd.cursor();
     cmd.reset(here);
 
-    int index = 0;
     while (cmd.cursor() < stop) {
       here = cmd.cursor();
       try{
 	std::string value;
 	cmd >> value;
 	x->set_port_by_index(index++, value);
-      }catch (Exception_Too_Many& e) {untested();
+      }catch (Exception_Too_Many& e) {
 	cmd.warn(bDANGER, here, e.message());
       }
     }
+  }
+  if (index < x->min_nodes()) {
+    cmd.warn(bDANGER, "need " + to_string(x->min_nodes()-index) +" more nodes, grounding");
+    for (int iii = index;  iii < x->min_nodes();  ++iii) {
+      x->set_port_to_ground(iii);
+    }
+  }else{
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -185,7 +193,7 @@ MODEL_CARD* LANG_SPECTRE::parse_paramset(CS& cmd, MODEL_CARD* x)
   return x;
 }
 /*--------------------------------------------------------------------------*/
-MODEL_SUBCKT* LANG_SPECTRE::parse_module(CS& cmd, MODEL_SUBCKT* x)
+BASE_SUBCKT* LANG_SPECTRE::parse_module(CS& cmd, BASE_SUBCKT* x)
 {
   assert(x);
 
@@ -227,7 +235,7 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
   cmd.reset().skipbl();
   unsigned here = 0;
   std::string type;
-  if ((cmd >> "*|//")) {itested();
+  if ((cmd >> "*|//")) {
     assert(here == 0);
     type = "dev_comment";
   }else if ((cmd >> "model |simulator |parameters |subckt ")) {
@@ -239,7 +247,7 @@ std::string LANG_SPECTRE::find_type_in_string(CS& cmd)
     here = cmd.cursor();
     cmd.reset(here);
     cmd >> type;
-  }else if (cmd.reset().scan("=")) {itested();
+  }else if (cmd.reset().scan("=")) {
     // back up two, by starting over
     cmd.reset().skiparg();
     unsigned here1 = cmd.cursor();
@@ -313,7 +321,7 @@ static void print_ports(OMSTREAM& o, const COMPONENT* x)
     o << sep << x->port_value(ii);
     sep = " ";
   }
-  for (int ii = 0;  x->current_port_exists(ii);  ++ii) {
+  for (int ii = 0;  x->current_port_exists(ii);  ++ii) {untested();
     o << sep << x->current_port_value(ii);
     sep = " ";
   }
@@ -329,7 +337,7 @@ void LANG_SPECTRE::print_paramset(OMSTREAM& o, const MODEL_CARD* x)
   o << "\n\n";
 }
 /*--------------------------------------------------------------------------*/
-void LANG_SPECTRE::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
+void LANG_SPECTRE::print_module(OMSTREAM& o, const BASE_SUBCKT* x)
 {
   assert(x);
   assert(x->subckt());
@@ -358,7 +366,7 @@ void LANG_SPECTRE::print_instance(OMSTREAM& o, const COMPONENT* x)
 void LANG_SPECTRE::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
 {
   assert(x);
-  if (x->comment()[0] != '*') {untested();
+  if (x->comment()[0] != '*') {
     o << "*";
   }else{untested();
   }
@@ -366,7 +374,7 @@ void LANG_SPECTRE::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
 }
 /*--------------------------------------------------------------------------*/
 void LANG_SPECTRE::print_command(OMSTREAM& o, const DEV_DOT* x)
-{
+{untested();
   assert(x);
   o << x->s() << '\n';
 }
@@ -389,10 +397,10 @@ class CMD_MODEL : public CMD {
 	assert(!new_card->owner());
 	lang_spectre.parse_paramset(cmd, new_card);
 	Scope->push_back(new_card);
-      }else{
+      }else{untested();
 	cmd.warn(bDANGER, here, "model: base has incorrect type");
       }
-    }else{
+    }else{untested();
       cmd.warn(bDANGER, here, "model: no match");
     }
   }
@@ -402,11 +410,12 @@ DISPATCHER<CMD>::INSTALL d1(&command_dispatcher, "model", &p1);
 class CMD_SUBCKT : public CMD {
   void do_it(CS& cmd, CARD_LIST* Scope)
   {
-    MODEL_SUBCKT* new_module = new MODEL_SUBCKT;
+    BASE_SUBCKT* new_module = dynamic_cast<BASE_SUBCKT*>(device_dispatcher.clone("subckt"));
     assert(new_module);
     assert(!new_module->owner());
     assert(new_module->subckt());
     assert(new_module->subckt()->is_empty());
+    assert(!new_module->is_device());
     lang_spectre.parse_module(cmd, new_module);
     Scope->push_back(new_module);
   }
@@ -433,3 +442,4 @@ DISPATCHER<CMD>::INSTALL d8(&command_dispatcher, "spectre", &p8);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

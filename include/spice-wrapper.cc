@@ -1,4 +1,4 @@
-/* $Id: spice-wrapper.cc,v 26.138 2013/04/24 02:32:27 al Exp $ -*- C++ -*-
+/* $Id: spice-wrapper.cc 2016/09/17 $ -*- C++ -*-
  * Copyright (C) 2007 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -61,7 +61,7 @@ extern "C" {
 // gnucap includes
 #include "globals.h"
 #include "u_xprobe.h"
-#include "d_subckt.h"
+#include "e_paramlist.h"
 #include "e_storag.h"
 #include "e_model.h"
 /*--------------------------------------------------------------------------*/
@@ -91,7 +91,7 @@ enum {uGROUND=1, uFLOAT=2, uDISALLOW=3};
 const int MATRIX_NODES = (MAX_NET_NODES + INTERNAL_NODES);
 class DEV_SPICE;
 class MODEL_SPICE;
-static COMMON_SUBCKT Default_Params(CC_STATIC);
+static COMMON_PARAMLIST Default_Params(CC_STATIC);
 /*--------------------------------------------------------------------------*/
 /* function mapping: see devdefs.h
  * DEVparam	DEV_SPICE::parse_spice
@@ -217,7 +217,7 @@ protected: // override virtual
   int	  net_nodes()const	{return _net_nodes;}
   int	  int_nodes()const	{return INTERNAL_NODES;}
   CARD*	  clone()const		{return new DEV_SPICE(*this);}
-  void	  precalc_first();
+  //void  precalc_first();	//ELEMENT
   void	  expand();
   void	  precalc_last();
   //void  map_nodes();		//ELEMENT
@@ -838,7 +838,7 @@ void DEV_SPICE::set_param_by_name(std::string Name, std::string Value)
   }else{
   }
   COMPONENT::set_param_by_name(Name, Value);
-  COMMON_SUBCKT* c = dynamic_cast<COMMON_SUBCKT*>(mutable_common());
+  COMMON_PARAMLIST* c = dynamic_cast<COMMON_PARAMLIST*>(mutable_common());
   assert(c);
   Set_param_by_name(Name, to_string(c->_params[Name].e_val(1,scope())));
 }
@@ -1003,12 +1003,17 @@ void DEV_SPICE::expand()
   assert_instance();
 }
 /*--------------------------------------------------------------------------*/
-void DEV_SPICE::precalc_first()
+void DEV_SPICE::precalc_last()
 {
-  STORAGE::precalc_first();
+  assert(_model);
+  assert_instance();
+  assert(info.DEVsetup);
+
+  STORAGE::precalc_last();
+  init_ckt();
 
   // push down parameters into spice data
-  COMMON_SUBCKT* c = dynamic_cast<COMMON_SUBCKT*>(mutable_common());
+  COMMON_PARAMLIST* c = dynamic_cast<COMMON_PARAMLIST*>(mutable_common());
   assert(c);
   for (PARAM_LIST::iterator i = c->_params.begin(); i != c->_params.end(); ++i) {
     if (i->second.has_hard_value()) {
@@ -1020,16 +1025,6 @@ void DEV_SPICE::precalc_first()
     }else{
     }
   }
-}
-/*--------------------------------------------------------------------------*/
-void DEV_SPICE::precalc_last()
-{
-  assert(_model);
-  assert_instance();
-  assert(info.DEVsetup);
-
-  STORAGE::precalc_last();
-  init_ckt();
 
   int* node = spice_nodes(); // treat as array	//
   int  node_stash[MATRIX_NODES];			//
@@ -1073,7 +1068,7 @@ void DEV_SPICE::precalc_last()
 
     assert(ok == OK);
     assert(num_states_garbage == _num_states);
-    trace3("precalc", maxEqNum_stash, ckt()->CKTmaxEqNum, (maxEqNum_stash == ckt()->CKTmaxEqNum));
+    trace3("precalc", _maxEqNum, ckt()->CKTmaxEqNum, (_maxEqNum == ckt()->CKTmaxEqNum));
     assert(_maxEqNum == ckt()->CKTmaxEqNum);
     notstd::copy_n(node_stash, matrix_nodes(), node); // put back real nodes
     // hopefully, the matrix pointers are the same as last time!
@@ -1232,7 +1227,7 @@ bool DEV_SPICE::do_tr()
 
     for (int ii = 0; ii < matrix_nodes()+OFFSET; ++ii) {
       for (int jj = 0; jj < matrix_nodes()+OFFSET; ++jj) {
-	_matrix[ii][jj].real() = 0;
+	_matrix[ii][jj].real(0.);
       }
     }
   }
@@ -1902,3 +1897,4 @@ static DISPATCHER<MODEL_CARD>::INSTALL
   d1(&model_dispatcher, MODEL_TYPE, &p1);
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

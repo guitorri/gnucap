@@ -1,4 +1,4 @@
-/*$Id: e_compon.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: e_compon.cc 2016/03/23 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -27,7 +27,8 @@
 #include "e_elemnt.h"
 /*--------------------------------------------------------------------------*/
 COMMON_COMPONENT::COMMON_COMPONENT(const COMMON_COMPONENT& p)
-  :_tnom_c(p._tnom_c),
+  :CKT_BASE(p),
+   _tnom_c(p._tnom_c),
    _dtemp(p._dtemp),
    _temp_c(p._temp_c),
    _mfactor(p._mfactor),
@@ -39,7 +40,8 @@ COMMON_COMPONENT::COMMON_COMPONENT(const COMMON_COMPONENT& p)
 }
 /*--------------------------------------------------------------------------*/
 COMMON_COMPONENT::COMMON_COMPONENT(int c)
-  :_tnom_c(NOT_INPUT),
+  :CKT_BASE(),
+   _tnom_c(NOT_INPUT),
    _dtemp(0),
    _temp_c(NOT_INPUT),
    _mfactor(1),
@@ -269,12 +271,12 @@ std::string COMMON_COMPONENT::param_value(int i)const
   }
 }
 /*--------------------------------------------------------------------------*/
-void COMMON_COMPONENT::precalc_first(const CARD_LIST* Scope)
+void COMMON_COMPONENT::precalc_last(const CARD_LIST* Scope)
 {
   assert(Scope);
   _tnom_c.e_val(OPT::tnom_c, Scope);
   _dtemp.e_val(0., Scope);
-  _temp_c.e_val(CKT_BASE::_sim->_temp_c + _dtemp, Scope);
+  _temp_c.e_val(_sim->_temp_c + _dtemp, Scope);
   _mfactor.e_val(1, Scope);
   _value.e_val(0, Scope);
 }
@@ -427,12 +429,12 @@ bool COMPONENT::node_is_connected(int i)const
 }
 /*--------------------------------------------------------------------------*/
 void COMPONENT::set_port_by_name(std::string& int_name, std::string& ext_name)
-{untested();
-  for (int i=0; i<max_nodes(); ++i) {untested();
-    if (int_name == port_name(i)) {untested();
+{
+  for (int i=0; i<max_nodes(); ++i) {
+    if (int_name == port_name(i)) {
       set_port_by_index(i, ext_name);
       return;
-    }else{untested();
+    }else{
     }
   }
   untested();
@@ -446,19 +448,19 @@ void COMPONENT::set_port_by_index(int num, std::string& ext_name)
     if (num+1 > _net_nodes) {
       // make the list bigger
       _net_nodes = num+1;
-    }else{untested();
+    }else{
       // it's already big enough, probably assigning out of order
     }
-  }else{untested();
+  }else{
     throw Exception_Too_Many(num+1, max_nodes(), 0/*offset*/);
   }
 }
 /*--------------------------------------------------------------------------*/
 void COMPONENT::set_port_to_ground(int num)
-{untested();
-  if (num < max_nodes()) {untested();
+{
+  if (num < max_nodes()) {
     _n[num].set_to_ground(this);
-    if (num+1 > _net_nodes) {untested();
+    if (num+1 > _net_nodes) {
       _net_nodes = num+1;
     }else{untested();
     }
@@ -530,9 +532,10 @@ void COMPONENT::precalc_first()
     _mfactor = common()->mfactor();
   }else{
   }
-  
+
+  //BUG//  _mfactor must be in precalc_first
+
   _mfactor.e_val(1, scope());
-  _value.e_val(0.,scope());
   trace1(long_label().c_str(), double(_mfactor));
   if (const COMPONENT* o = prechecked_cast<const COMPONENT*>(owner())) {
     _mfactor_fixed = o->mfactor() * _mfactor;
@@ -553,6 +556,8 @@ void COMPONENT::precalc_last()
     }
   }else{
   }
+
+  _value.e_val(0.,scope());
 }
 /*--------------------------------------------------------------------------*/
 void COMPONENT::map_nodes()
@@ -918,3 +923,4 @@ double COMPONENT::volts_limited(const node_t & n1, const node_t & n2)
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

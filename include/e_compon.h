@@ -1,4 +1,4 @@
-/*$Id: e_compon.h,v 26.138 2013/04/24 02:32:27 al Exp $ -*- C++ -*-
+/*$Id: e_compon.h 2016/03/23 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -55,7 +55,7 @@ enum {CC_STATIC=27342}; // mid-sized arbitrary positive int
 // pass this as an argument to a common constructor to mark it as static,
 // so it won't be deleted
 /*--------------------------------------------------------------------------*/
-class INTERFACE COMMON_COMPONENT {
+class INTERFACE COMMON_COMPONENT : public CKT_BASE {
 protected:
   PARAMETER<double>	_tnom_c;  // specification temperature
   PARAMETER<double>	_dtemp;   // rise over enclosing temperature
@@ -72,7 +72,7 @@ public:
 private:
   COMMON_COMPONENT& operator=(const COMMON_COMPONENT&)
 			      {unreachable(); return *this;}
-  explicit COMMON_COMPONENT() {unreachable();incomplete();}
+  explicit COMMON_COMPONENT() : CKT_BASE() {unreachable();incomplete();}
 protected:
   explicit COMMON_COMPONENT(const COMMON_COMPONENT& p);
   explicit COMMON_COMPONENT(int c);
@@ -102,10 +102,10 @@ public:
   virtual void set_param_by_index(int, std::string&, int);
   virtual int param_count()const {return 4;}
 public:
-  virtual void precalc_first(const CARD_LIST*);
+  virtual void precalc_first(const CARD_LIST*)	{}
   virtual void expand(const COMPONENT*)		{}
   virtual COMMON_COMPONENT* deflate()		{return this;}
-  virtual void precalc_last(const CARD_LIST*)	{}
+  virtual void precalc_last(const CARD_LIST*);
 
   virtual void	tr_eval(ELEMENT*)const;
   virtual void	ac_eval(ELEMENT*)const;
@@ -283,3 +283,4 @@ public:	// obsolete -- do not use in new code
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

@@ -1,0 +1,79 @@
+## -*- Makefile -*-
+##
+## $Id: Makefile.am,v 26.136 2009/12/08 02:03:49 al Exp $
+##
+##                            COPYRIGHT
+##
+## This file is part of "Gnucap", the Gnu Circuit Analysis Package
+##
+##  Copyright (C) 2005, 2006 Dan McMahill
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc.,  51 Franklin Street, Fifth Floor, Boston, MA
+##  02110-1301, USA.
+
+RAW_SRCS = \
+spice-wrapper.cc
+#------------------------------------------------------------------------
+RAW_HDRS = \
+ap.h bm.h c_comand.h constant.h d_coment.h d_dot.h d_logic.h \
+declare.h e_aux.h e_base.h e_card.h e_cardlist.h e_ccsrc.h \
+e_compon.h e_elemnt.h e_model.h e_node.h e_storag.h e_subckt.h \
+e_paramlist.h \
+globals.h io_.h io_error.h io_trace.h l_compar.h l_denoise.h \
+l_dispatcher.h l_lib.h l_stlextra.h l_timer.h m_base.h m_cpoly.h \
+m_divdiff.h m_expression.h m_interp.h m_matrix.h m_phase.h m_spline.h \
+m_wave.h md.h mode.h patchlev.h s__.h s_tr.h trace_off.h trace_on.h \
+u_cardst.h u_function.h u_lang.h u_limit.h u_nodemap.h u_opt.h \
+u_parameter.h u_prblst.h u_probe.h u_sdp.h u_sim_data.h u_status.h \
+u_time_pair.h u_xprobe.h
+#------------------------------------------------------------------------
+gnucaphdrdir=$(pkgincludedir)
+gnucaphdr_HEADERS = $(RAW_HDRS) $(RAW_SRCS)
+#------------------------------------------------------------------------
+RAW_OTHER = \
+configure Make1
+#------------------------------------------------------------------------
+RAW = $(RAW_HDRS) $(RAW_SRCS) $(MODELS) $(RAW_OTHER)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+IMPORTED_SRCS =
+IMPORTED_HDRS =
+IMPORTED_OTHER =
+IMPORTED = $(IMPORTED_SRCS) $(IMPORTED_HDRS) $(IMPORTED_OTHER)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+GENERATED_SRCS = ${MODELS:.model=.cc}
+GENERATED_HDRS = ${MODELS:.model=.h}
+GENERATED_OTHER = Make.aux
+GENERATED = $(GENERATED_HDRS) $(GENERATED_SRCS) $(GENERATED_OTHER)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+GENERATED_DIST = Make.depend
+IMPORTED_DIST = $(IMPORTED)
+# DISTFILES = $(RAW) $(GENERATED_DIST) $(IMPORTED_DIST)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+SRCS = $(IMPORTED_SRCS) $(GENERATED_SRCS) $(RAW_SRCS)
+HDRS = $(RAW_HDRS) $(GENERATED_HDRS) $(IMPORTED_HDRS)
+OBJS = ${SRCS:.cc=.o}
+TARGET_DEPENDS = $(OBJS) $(RAW) $(MODELS)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+MOSTLYCLEANFILES = $(OBJS) $(GENERATED)
+CLEANFILES = $(MOSTLYCLEANFILES)
+DISTCLEANFILES = $(CLEANFILES)
+MAINTAINERCLEANFILES = $(DISTCLEANFILES)
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------

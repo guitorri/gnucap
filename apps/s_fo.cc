@@ -1,4 +1,4 @@
-/*$Id: s_fo.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: s_fo.cc 2016/09/26 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -77,7 +77,10 @@ void FOURIER::do_it(CS& Cmd, CARD_LIST* Scope)
   ::status.four.reset().start();
   
   try {
+    setup(Cmd);
     _sim->init();
+    CARD_LIST::card_list.precalc_last();
+
     _sim->alloc_vectors();    
     _sim->_aa.reallocate();
     _sim->_aa.dezero(OPT::gmin);
@@ -85,11 +88,9 @@ void FOURIER::do_it(CS& Cmd, CARD_LIST* Scope)
     _sim->_lu.reallocate();
     _sim->_lu.dezero(OPT::gmin);
     _sim->_lu.set_min_pivot(OPT::pivtol);
-    
-    setup(Cmd);
     fftallocate();
-    
     ::status.set_up.stop();
+
     switch (ENV::run_mode) {
     case rPRE_MAIN:	unreachable();		break;
     case rBATCH:	untested();
@@ -100,11 +101,12 @@ void FOURIER::do_it(CS& Cmd, CARD_LIST* Scope)
   }catch (Exception& e) {untested();
     error(bDANGER, e.message() + '\n');
   }
-  
   fftunallocate();
   _sim->unalloc_vectors();
   _sim->_lu.unallocate();
   _sim->_aa.unallocate();
+
+  _sim->_has_op = s_FOURIER;
   _scope = NULL;
 
   ::status.four.stop();
@@ -127,7 +129,7 @@ void FOURIER::store_results(double X)
       _fdata[ii][_stepno] = p->value();
       ++ii;
     }
-  }else{untested();
+  }else{
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -296,12 +298,12 @@ void FOURIER::setup(CS& Cmd)
     _tstart = _sim->_last_time;
   }
   _tstop = _tstart + 1. / _fstep;
-  _tstep = 1. / _fstep / (_timesteps-1);
+  _tstrobe = 1. / _fstep / (_timesteps-1);
   _time1 = _sim->_time0 = _tstart;
 
   _sim->_freq = _fstep;
 
-  _dtmax = std::min(double(_dtmax_in), _tstep / double(_skip_in));
+  _dtmax = std::min(double(_dtmax_in), _tstrobe / double(_skip_in));
   if (_dtmin_in.has_hard_value()) {untested();
     _sim->_dtmin = _dtmin_in;
   }else if (_dtratio_in.has_hard_value()) {untested();
@@ -355,3 +357,4 @@ DISPATCHER<CMD>::INSTALL d3(&command_dispatcher, "fourier", &p3);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

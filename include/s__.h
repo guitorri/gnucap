@@ -1,4 +1,4 @@
-/*$Id: s__.h,v 26.138 2013/04/24 02:32:27 al Exp $ -*- C++ -*-
+/*$Id: s__.h 2016/09/22 $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -34,7 +34,7 @@ class PROBELIST;
 class COMPONENT;
 class WAVE;
 /*--------------------------------------------------------------------------*/
-class INTERFACE SIM : public CMD {
+class SIM : public CMD {
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */ 
 protected:
   enum TRACE { // how much diagnostics to show
@@ -44,6 +44,12 @@ protected:
     tREJECTED  = 3,	/* show rejected time steps			*/
     tITERATION = 4,	/* show every iteration, including nonconverged	*/
     tVERBOSE   = 5	/* show extended diagnostics			*/
+  };
+  enum OUTFLAGS { // bit fields
+    ofNONE  = 0,
+    ofPRINT = 1,
+    ofSTORE = 2,
+    ofKEEP  = 4
   };
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
   CARD_LIST* _scope;
@@ -73,7 +79,7 @@ protected:
 	 const PROBELIST& plotlist()const;
 	 const PROBELIST& printlist()const;
 	 const PROBELIST& storelist()const;
-  virtual void	outdata(double);
+  virtual void	outdata(double, int);
   virtual void	head(double,double,const std::string&);
   virtual void	print_results(double);
   virtual void	alarm();
@@ -96,3 +102,4 @@ private:
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

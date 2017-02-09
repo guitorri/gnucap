@@ -1,4 +1,4 @@
-/*$Id: bm.h,v 26.134 2009/11/29 03:47:06 al Exp $ -*- C++ -*-
+/*$Id: bm.h 2016/03/23 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -65,14 +65,14 @@ protected:
   void		tr_finish_tdv(ELEMENT* d, double val)const;
   void		ac_final_adjust(COMPLEX* y)const;
   void		ac_final_adjust_with_temp(COMPLEX* y)const;
-  double	uic(double x)const	{return (CKT_BASE::_sim->uic_now()) ? _ic : x;}
+  double	uic(double x)const	{return (_sim->uic_now()) ? _ic : x;}
   double	ioffset(double x)const	{return uic(x) + _ioffset;}	
 public: // override virtual
   bool		operator==(const COMMON_COMPONENT&)const;
   //COMPONENT_COMMON* clone()const;	//COMPONENT_COMMON=0
   void		print_common_obsolete_callback(OMSTREAM&, LANGUAGE*)const;
 
-  void		precalc_first(const CARD_LIST*);
+  void		precalc_last(const CARD_LIST*);
   void		ac_eval(ELEMENT*)const;
   virtual bool	ac_too()const = 0;
 protected: // override virtual
@@ -105,3 +105,4 @@ private: // override virtual
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

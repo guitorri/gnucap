@@ -48,7 +48,8 @@ protected: // create and destroy
   virtual  ~CKT_BASE();
   //--------------------------------------------------------------------
 public: // user stuff
-  virtual void	      help(CS&, OMSTREAM&)const {untested();}
+  virtual std::string help_text()const {return "";}
+  virtual bool	      help(CS&, OMSTREAM&)const;
   virtual std::string status()const {untested();return "";}
   //--------------------------------------------------------------------
 public: // probes
@@ -71,3 +72,4 @@ public: // label
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

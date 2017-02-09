@@ -25,6 +25,23 @@ fi
 
 args="--prefix=$prefix"
 
+# BUG: install plugins to libdir.
+pkglibdir=$prefix/lib
+
+# bug. this is not implemented consistently.
+CXX=${CXX-g++}
+
+WHICH_MAKE=$(which make)
+sed -e "s#@prefix@#$prefix#" \
+    -e "s#@libdir@#$prefix/lib#" \
+    -e "s#@pkglibdir@#$prefix/lib/gnucap#" \
+    -e "s#@CXXFLAGS@#$CCFLAGS#" \
+    -e "s#@CPPFLAGS@#-I$prefix/include/gnucap#" \
+    -e "s#@LDFLAGS@##" \
+    -e "s#@LIBS@#-lgnucap#" \
+    -e "s#@WHICH_MAKE@#$WHICH_MAKE#" \
+    -e "s#@CXX@#$CXX#" < gnucap.mk.in > gnucap.mk
+
 echo "Configuring gnucap using $args"
 #---------------------------------------------------
 echo include

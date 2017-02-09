@@ -1,4 +1,4 @@
-/*$Id: d_logic.cc,v 26.137 2010/04/10 02:37:33 al Exp $ -*- C++ -*-
+/*$Id: d_logic.cc  2016/09/17 $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -26,7 +26,7 @@
  */
 //testing=script,sparse 2006.07.17
 #include "globals.h"
-#include "d_subckt.h"
+#include "e_subckt.h"
 #include "u_xprobe.h"
 #include "d_logic.h"
 /*--------------------------------------------------------------------------*/
@@ -90,12 +90,12 @@ void DEV_LOGIC::expand()
   try {
     const CARD* model = find_looking_out(subckt_name);
     
-    if(!dynamic_cast<const MODEL_SUBCKT*>(model)) {untested();
+    if(!dynamic_cast<const BASE_SUBCKT*>(model)) {untested();
       error(((!_sim->is_first_expand()) ? (bDEBUG) : (bWARNING)),
 	    long_label() + ": " + subckt_name + " is not a subckt, forcing digital\n");
     }else{
       _gatemode = OPT::mode;    
-      renew_subckt(model, this, scope(), NULL/*&(c->_params)*/);    
+      renew_subckt(model, NULL/*&(c->_params)*/);    
       subckt()->expand();
     }
   }catch (Exception_Cant_Find&) {
@@ -511,3 +511,4 @@ bool COMMON_LOGIC::operator==(const COMMON_COMPONENT& x)const
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

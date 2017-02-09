@@ -1,0 +1,19 @@
+extern:
+
+here you can stage external packages, see [1].
+
+for example
+git clone git://tool.em.cs.uni-frankfurt.de/git/gnucap-bsim --branch master extern/bsim
+cd !$; ./autogen.sh; cd -
+./configure
+make install
+
+or just (untested)
+tar -xf some_bsim_tarball -C extern/bsim --strip-components 1
+# no autogen
+./configure ...
+
+this is under construction also for spice3f5
+results may vary, please report trouble
+
+[1] http://www.gnu.org/software/automake/manual/html_node/Subpackages.html

@@ -1,4 +1,4 @@
-/*$Id: io_error.h,v 26.138 2013/04/24 02:32:27 al Exp $ -*- C++ -*-
+/*$Id: io_error.h 2016/04/19 al $ -*- C++ -*-
  * data for error and exception handling
  *
  * Copyright (C) 2001 Albert Davis
@@ -22,9 +22,11 @@
  * 02110-1301, USA.
  */
 //testing=trivial 2006.07.17
-#ifndef bDANGER
-//#include "md.h"  included by
-//#include "io_trace.h"
+#ifndef IO_ERROR_H_INCLUDED
+#define IO_ERROR_H_INCLUDED
+#ifndef MD_H_INCLUDED
+#include "md.h"
+#endif
 /*--------------------------------------------------------------------------*/
 /* arg to error() (badness) to decide severity of exception */
 #define	bNOERROR	0
@@ -47,8 +49,8 @@ struct Exception {
   virtual ~Exception() {}
 };
 class CS;
-struct Exception_CS :public Exception {
-  std::string _cmd;
+struct INTERFACE Exception_CS :public Exception { 
+ std::string _cmd;
   unsigned _cursor;
   const std::string message()const;
   //Exception_CS(const std::string& Message, const CS& cmd, unsigned cursor);
@@ -77,7 +79,7 @@ struct Exception_Too_Many :public Exception{
   Exception_Too_Many(int requested, int max, int offset)
     :Exception("too many: requested=" + to_string(requested+offset)
 	       + " max=" + to_string(max+offset)),
-     _requested(requested), _max(max), _offset(offset) {untested();
+     _requested(requested), _max(max), _offset(offset) {
   }
 };
 struct Exception_Type_Mismatch :public Exception{
@@ -114,3 +116,4 @@ struct Exception_File_Open :public Exception{
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

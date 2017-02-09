@@ -392,7 +392,7 @@ void LOGIC_NODE::to_logic(const MODEL_LOGIC*f)
 				/* a transition state.		   */
     set_d_iter();
     set_last_change_time();
-    trace3(_failure_mode, _lastchange, _quality, _lv);
+    trace3(_failure_mode.c_str(), _lastchange, _quality, _lv);
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -536,7 +536,7 @@ void node_t::map_subckt_node(int* m, const CARD* d)
   assert(e_() >= 0);
   if (node_is_valid(m[e_()])) {
     _ttt = m[e_()];
-  }else{untested();
+  }else{
     throw Exception(d->long_label() + ": need more nodes");
   }
   //_nnn->set_flat_number(_ttt);
@@ -544,3 +544,4 @@ void node_t::map_subckt_node(int* m, const CARD* d)
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

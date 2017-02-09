@@ -1,4 +1,4 @@
-/*$Id: bm.cc,v 26.137 2010/04/10 02:37:33 al Exp $ -*- C++ -*-
+/*$Id: bm.cc 2016/03/23 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -93,7 +93,7 @@ void EVAL_BM_ACTION_BASE::ac_final_adjust(COMPLEX* y)const
 {
   if (_bandwidth != NOT_INPUT && _bandwidth != 0.) {untested();
     assert(y->imag() == 0);
-    double ratio = CKT_BASE::_sim->_freq / _bandwidth;
+    double ratio = _sim->_freq / _bandwidth;
     double coeff = y->real() / (1.+(ratio*ratio));
     *y = COMPLEX(coeff, -coeff * ratio);
   }else{
@@ -105,7 +105,7 @@ void EVAL_BM_ACTION_BASE::ac_final_adjust(COMPLEX* y)const
   }
 
   if (_delay != 0.) {untested();
-    double ratio = CKT_BASE::_sim->_freq * _delay;
+    double ratio = _sim->_freq * _delay;
     if (ratio > 100000.) {untested();
       error(bPICKY, "delay too long\n");
       ratio = 0.;
@@ -156,10 +156,10 @@ void EVAL_BM_ACTION_BASE::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* 
   COMMON_COMPONENT::print_common_obsolete_callback(o, lang);
 }
 /*--------------------------------------------------------------------------*/
-void EVAL_BM_ACTION_BASE::precalc_first(const CARD_LIST* Scope)
+void EVAL_BM_ACTION_BASE::precalc_last(const CARD_LIST* Scope)
 {
   assert(Scope);
-  COMMON_COMPONENT::precalc_first(Scope);
+  COMMON_COMPONENT::precalc_last(Scope);
   _bandwidth.e_val(_default_bandwidth, Scope);
   _delay.e_val(_default_delay, Scope);
   _phase.e_val(_default_phase, Scope);
@@ -223,3 +223,4 @@ COMMON_COMPONENT* EVAL_BM_ACTION_BASE::parse_func_type(CS& cmd)
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

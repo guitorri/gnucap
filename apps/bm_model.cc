@@ -95,7 +95,7 @@ void EVAL_BM_MODEL::print_common_obsolete_callback(OMSTREAM& o, LANGUAGE* lang)c
     _func->print_common_obsolete_callback(o, lang);
   }else{
     o << modelname();
-    if (_arglist != "") {untested();
+    if (_arglist != "") {
       o << "(" << _arglist << ")";
     }else{
     }
@@ -143,3 +143,4 @@ DISPATCHER<COMMON_COMPONENT>::INSTALL d1(&bm_dispatcher, "eval_bm_model", &p1);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

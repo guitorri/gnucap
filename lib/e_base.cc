@@ -1,4 +1,4 @@
-/*$Id: e_base.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: e_base.cc 2015/02/05 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -22,6 +22,7 @@
  * Base class for "cards" in the circuit description file
  */
 //testing=script 2014.07.04
+#include "ap.h"
 #include "u_sim_data.h"
 #include "m_wave.h"
 #include "u_prblst.h"
@@ -45,7 +46,7 @@ CKT_BASE::~CKT_BASE()
   if (_probes == 0) {
   }else if (!_probe_lists) {untested();
   }else if (!_sim) {untested();
-  }else{untested();
+  }else{
     _probe_lists->purge(this);
   }
   trace1("", _probes);
@@ -60,6 +61,30 @@ const std::string CKT_BASE::long_label()const
   //  buffer += '.' + brh->short_label();
   //}
   return buffer;
+}
+/*--------------------------------------------------------------------------*/
+bool CKT_BASE::help(CS& Cmd, OMSTREAM& Out)const
+{
+  if (help_text() != "") {
+    unsigned here = Cmd.cursor();
+    std::string keyword;
+    Cmd >> keyword;
+    CS ht(CS::_STRING, help_text());
+    if (keyword == "") {
+      Out << ht.get_to("@@");
+    }else if (ht.scan("@@" + keyword + ' ')) {
+      Out << ht.get_to("@@");
+    }else if (keyword == "?") {
+      while (ht.scan("@@")) {
+	Out << "  " << ht.get_to("\n") << '\n';
+      }
+    }else{
+      Cmd.warn(bWARNING, here, "no help on subtopic " + Cmd.substr(here));
+    }
+    return true;
+  }else{
+    return false;
+  }
 }
 /*--------------------------------------------------------------------------*/
 double CKT_BASE::probe_num(const std::string& what)const
@@ -138,3 +163,4 @@ double CKT_BASE::ac_probe_num(const std::string& what)const
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

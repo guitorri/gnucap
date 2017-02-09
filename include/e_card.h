@@ -1,4 +1,4 @@
-/*$Id: e_card.h,v 26.133 2009/11/26 04:58:04 al Exp $ -*- C++ -*-
+/*$Id: e_card.h 2014.11.25 $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -58,7 +58,7 @@ protected: // create and destroy.
   explicit CARD(const CARD&);
 public:
   virtual  ~CARD();
-  virtual CARD*	 clone()const		{unreachable(); return NULL;}
+  virtual CARD*	 clone()const = 0;
   virtual CARD*	 clone_instance()const  {return clone();}
   //--------------------------------------------------------------------
 public:	// "elaborate"
@@ -114,8 +114,10 @@ public: // subckt
   CARD_LIST*	     subckt()		{return _subckt;}
   const CARD_LIST*   subckt()const	{return _subckt;}
   void	  new_subckt();
-  void	  new_subckt(const CARD* model, CARD* owner, const CARD_LIST* scope, PARAM_LIST* p);
-  void	  renew_subckt(const CARD* model, CARD* owner, const CARD_LIST* scope, PARAM_LIST* p);
+  void	  new_subckt(const CARD* model, PARAM_LIST* p);
+  void	  renew_subckt(const CARD* model, PARAM_LIST* p);
+  //void     new_subckt(const CARD* model, CARD* owner, const CARD_LIST* scope, PARAM_LIST* p);
+  //void     renew_subckt(const CARD* model, CARD* owner, const CARD_LIST* scope, PARAM_LIST* p);
   //--------------------------------------------------------------------
 public:	// type
   virtual std::string dev_type()const	{unreachable(); return "";}
@@ -150,3 +152,4 @@ public:	// obsolete -- do not use in new code
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

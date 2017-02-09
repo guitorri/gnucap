@@ -1,4 +1,4 @@
-/* $Id: d_mos8.model,v 26.132 2009/11/24 04:26:37 al Exp $ -*- C++ -*-
+/* $Id: d_mos8.model $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -1573,7 +1573,6 @@ model BUILT_IN_MOS8 {
       }
       //double d__csub = Isub - (Gbb * Vbseff + Gbd * d->vds + Gbg * d->vgs);
     }
-    trace4("", d->isub, d->gbbs, d->gbgs, d->gbds);
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     /* Calculate Qinv for Noise analysis */
     {
@@ -1924,7 +1923,7 @@ model BUILT_IN_MOS8 {
 
 	  double T0 = t->vtm * nnoff;
 	  double Vgst = Vgs_eff - d->von;
-	  double VgstNVt = (Vgst - s->voffcv) / (2*T0);
+	  double VgstNVt = (Vgst - s->voffcv) / T0;
 	  
 	  trace3("", d->vgst, Vgst, VgstNVt);
 	  trace2("", n, t->vtm);
@@ -2793,7 +2792,15 @@ model BUILT_IN_MOS8 {
       d->cbdsb = 0.;
       d->cbddb = 0.;
     }
-    
+    if (m->polarity == pP){
+      d->qgs *= -1;
+      d->qbd *= -1;
+      d->qbs *= -1;
+      d->qgd *= -1;
+      d->qdrn *= -1;
+      //d->qbulk *= -1;
+    }else{
+    }
     assert(d->qbulk == d->qbulk);
     assert(d->qdrn == d->qdrn);
     assert(d->qgate == d->qgate);
@@ -2805,7 +2812,7 @@ model BUILT_IN_MOS8 {
 
     trace2("", d->ids, d->gds);
     trace4("", d->gmf, d->gmr, d->gmbf, d->gmbr);
-    trace4("", d->isub, d->gbbs, d->gbgs, d->gbds);
+    //trace4("", d->isub, d->gbbs, d->gbgs, d->gbds);
     trace4("", d->qgate, d->cggb, d->cgsb, d->cgdb);
     trace4("", d->qdrn, d->cdgb, d->cdsb, d->cddb);
     trace4("", d->qbulk, d->cbgb, d->cbsb, d->cbdb);

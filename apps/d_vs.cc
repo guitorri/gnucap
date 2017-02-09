@@ -1,4 +1,4 @@
-/*$Id: d_vs.cc,v 26.137 2010/04/10 02:37:05 al Exp $ -*- C++ -*-
+/*$Id: d_vs.cc 2016/09/11 al $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -72,15 +72,19 @@ private: // override virtual
 /*--------------------------------------------------------------------------*/
 void DEV_VS::precalc_last()
 {
-  ELEMENT::precalc_last();
+  //ELEMENT::precalc_last();	//BUG// skip
+  COMPONENT::precalc_last();
   set_constant(!has_tr_eval());
   set_converged(!has_tr_eval());
+  set_constant(false);
 }
 /*--------------------------------------------------------------------------*/
 void DEV_VS::tr_begin()
 {
   ELEMENT::tr_begin();
-  _y1.f0 = _y[0].f0 = 0.; // override
+  _y[0].x  = 0.;
+  _y[0].f1 = value();
+  _y1.f0 = _y[0].f0 = 0.;	//BUG// override
   _loss1 = _loss0 = 1./OPT::shortckt;
   _m0.x  = 0.;
   _m0.c0 = -_loss0 * _y[0].f1;
@@ -89,9 +93,9 @@ void DEV_VS::tr_begin()
   if (!using_tr_eval()) {
     if (_n[OUT2].m_() == 0) {
       _sim->set_limit(value());
-    }else if (_n[OUT1].m_() == 0) {untested();
+    }else if (_n[OUT1].m_() == 0) {
       _sim->set_limit(-value());
-    }else{untested();
+    }else{
       //BUG// don't set limit
     }
   }else{
@@ -115,7 +119,7 @@ bool DEV_VS::do_tr()
     q_load();
     _m0.c0 = -_loss0 * _y[0].f1;
     assert(_m0.c1 == 0.);
-  }else{itested();
+  }else{
     assert(conchk(_loss0, 1./OPT::shortckt));
     assert(_y[0].x == 0.);
     assert(_y[0].f0 == 0.);
@@ -145,3 +149,4 @@ DISPATCHER<CARD>::INSTALL d1(&device_dispatcher, "V|vsource", &p1);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

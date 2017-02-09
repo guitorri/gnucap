@@ -1,4 +1,4 @@
-/*$Id: lang_spice.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: lang_spice.cc  2016/09/17 al $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -19,13 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-//testing=script 2007.07.13
+//testing=script 2015.01.27
 #include "globals.h"
 #include "u_status.h"
 #include "c_comand.h"
 #include "d_dot.h"
 #include "d_coment.h"
-#include "d_subckt.h"
+#include "e_subckt.h"
 #include "u_lang.h"
 #include "d_logic.h"
 #include "bm.h"
@@ -34,6 +34,8 @@ namespace {
 /*--------------------------------------------------------------------------*/
 class LANG_SPICE_BASE : public LANGUAGE {
 public:
+  LANG_SPICE_BASE() {}
+  ~LANG_SPICE_BASE() {}
   enum EOB {NO_EXIT_ON_BLANK, EXIT_ON_BLANK};
 
 public: // override virtual, used by callback
@@ -45,11 +47,11 @@ public: // override virtual, called by commands
   DEV_COMMENT*	parse_comment(CS&, DEV_COMMENT*);
   DEV_DOT*	parse_command(CS&, DEV_DOT*);
   MODEL_CARD*	parse_paramset(CS&, MODEL_CARD*);
-  MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*);
+  BASE_SUBCKT*  parse_module(CS&, BASE_SUBCKT*);
   COMPONENT*	parse_instance(CS&, COMPONENT*);
   std::string	find_type_in_string(CS&);
 public: // "local?", called by own commands
-  void parse_module_body(CS&, MODEL_SUBCKT*, CARD_LIST*, const std::string&,
+  void parse_module_body(CS&, BASE_SUBCKT*, CARD_LIST*, const std::string&,
 			 EOB, const std::string&);
 private: // local
   void parse_type(CS&, CARD*);
@@ -62,7 +64,7 @@ private: // compatibility hacks
 
 private: // override virtual, called by print_item
   void print_paramset(OMSTREAM&, const MODEL_CARD*);
-  void print_module(OMSTREAM&, const MODEL_SUBCKT*);
+  void print_module(OMSTREAM&, const BASE_SUBCKT*);
   void print_instance(OMSTREAM&, const COMPONENT*);
   void print_comment(OMSTREAM&, const DEV_COMMENT*);
   void print_command(OMSTREAM&, const DEV_DOT*);
@@ -76,7 +78,8 @@ private: // local
 /*--------------------------------------------------------------------------*/
 class LANG_SPICE : public LANG_SPICE_BASE {
 public:
-  ~LANG_SPICE() {itested();}
+  LANG_SPICE() {}
+  ~LANG_SPICE() {}
   std::string name()const {return "spice";}
   bool case_insensitive()const {return true;}
   UNITS units()const {return uSPICE;}
@@ -87,7 +90,8 @@ DISPATCHER<LANGUAGE>::INSTALL
 /*--------------------------------------------------------------------------*/
 class LANG_ACS : public LANG_SPICE_BASE {
 public:
-  ~LANG_ACS() {itested();}
+  LANG_ACS() {}
+  ~LANG_ACS() {}
   std::string name()const {return "acs";}
   bool case_insensitive()const {return true;}
   UNITS units()const {return uSPICE;}
@@ -166,7 +170,7 @@ static int count_ports(CS& cmd, int maxnodes, int minnodes, int leave_tail, int 
     }else{
     }
   }
-  if (num_nodes < start) {
+  if (num_nodes < start) {untested();
     cmd.reset(spots.back());
     throw Exception("what's this?");
   }else{
@@ -247,7 +251,7 @@ void LANG_SPICE_BASE::parse_ports(CS& cmd, COMPONENT* x, int minnodes,
 	unsigned here = cmd.cursor();
 	std::string node_name;
 	cmd >> node_name;
-	if (cmd.stuck(&here)) {itested();
+	if (cmd.stuck(&here)) {untested();
 	  // didn't move, probably a terminator.
 	  throw Exception("bad node name");
 	}else{
@@ -269,10 +273,10 @@ void LANG_SPICE_BASE::parse_ports(CS& cmd, COMPONENT* x, int minnodes,
 	}
       }
     }
-  }catch (Exception& e) {itested();
+  }catch (Exception& e) {untested();
     cmd.warn(bDANGER, here1, e.message());
   }
-  if (ii < minnodes) {itested();
+  if (ii < minnodes) {untested();
     cmd.warn(bDANGER, "need " + to_string(minnodes-ii) +" more nodes");
   }else{
   }
@@ -283,7 +287,7 @@ void LANG_SPICE_BASE::parse_ports(CS& cmd, COMPONENT* x, int minnodes,
   //assert(x->_net_nodes == ii);
   
   // ground unused input nodes
-  for (int iii = ii;  iii < minnodes;  ++iii) {itested();
+  for (int iii = ii;  iii < minnodes;  ++iii) {untested();
     x->set_port_to_ground(iii);
   }
   //assert(x->_net_nodes >= ii);
@@ -327,7 +331,7 @@ void LANG_SPICE_BASE::parse_element_using_obsolete_callback(CS& cmd, COMPONENT* 
     c = bm_dispatcher.clone("eval_bm_cond");
   }else{
   }
-  if (!c) {
+  if (!c) {untested();
     c = bm_dispatcher.clone("eval_bm_value");
   }else{
   }
@@ -391,7 +395,7 @@ void LANG_SPICE_BASE::parse_logic_using_obsolete_callback(CS& cmd, COMPONENT* x)
   else if (cmd.umatch("xor " )) {untested();common = new LOGIC_XOR;}
   else if (cmd.umatch("xnor ")) {untested();common = new LOGIC_XNOR;}
   else if (cmd.umatch("inv " )) {common = new LOGIC_INV;}
-  else {itested();
+  else {untested();
     cmd.warn(bWARNING,"need and,nand,or,nor,xor,xnor,inv");
     common=new LOGIC_NONE;
   }
@@ -445,12 +449,12 @@ void LANG_SPICE_BASE::parse_args(CS& cmd, CARD* x)
 	  break;
 	}else{
 	  try{
-	    if (value == "") {
+	    if (value == "") {untested();
 	      cmd.warn(bDANGER, there, x->long_label() + ": " + Name + " has no value?");
 	    }else{
 	    }
 	    x->set_param_by_name(Name, value);
-	  }catch (Exception_No_Match&) {itested();
+	  }catch (Exception_No_Match&) {untested();
 	    cmd.warn(bDANGER, there, x->long_label() + ": bad parameter " + Name + " ignored");
 	  }
 	}
@@ -539,7 +543,7 @@ MODEL_CARD* LANG_SPICE_BASE::parse_paramset(CS& cmd, MODEL_CARD* x)
   return x;
 }
 /*--------------------------------------------------------------------------*/
-MODEL_SUBCKT* LANG_SPICE_BASE::parse_module(CS& cmd, MODEL_SUBCKT* x)
+BASE_SUBCKT* LANG_SPICE_BASE::parse_module(CS& cmd, BASE_SUBCKT* x)
 {
   assert(x);
 
@@ -561,7 +565,7 @@ MODEL_SUBCKT* LANG_SPICE_BASE::parse_module(CS& cmd, MODEL_SUBCKT* x)
   return x;
 }
 /*--------------------------------------------------------------------------*/
-void LANG_SPICE_BASE::parse_module_body(CS& cmd, MODEL_SUBCKT* x, CARD_LIST* Scope,
+void LANG_SPICE_BASE::parse_module_body(CS& cmd, BASE_SUBCKT* x, CARD_LIST* Scope,
 		const std::string& prompt, EOB exit_on_blank, const std::string& exit_key)
 {
   try {
@@ -612,7 +616,7 @@ COMPONENT* LANG_SPICE_BASE::parse_instance(CS& cmd, COMPONENT* x)
       }
       parse_args(cmd, x);
     }
-  }catch (Exception& e) {
+  }catch (Exception& e) {untested();
     cmd.warn(bDANGER, e.message());
   }
   return x;
@@ -629,7 +633,7 @@ std::string LANG_SPICE_BASE::find_type_in_string(CS& cmd)
     id_letter = static_cast<char>(toupper(id_letter));
   }else{
   }
-  switch (id_letter) {
+  switch (id_letter) {untested();
   case '\0':untested();
     s = "";
     break;
@@ -670,7 +674,7 @@ void LANG_SPICE::parse_top_item(CS& cmd, CARD_LIST* Scope)
     cmd.get_line("gnucap-spice-title>");
     head = cmd.fullstring();
     IO::mstdout << head << '\n';
-  }else{itested();
+  }else{
     cmd.get_line("gnucap-spice>");
     new__instance(cmd, NULL, Scope);
   }
@@ -690,7 +694,7 @@ void LANG_SPICE_BASE::print_paramset(OMSTREAM& o, const MODEL_CARD* x)
   o << ")\n";
 }
 /*--------------------------------------------------------------------------*/
-void LANG_SPICE_BASE::print_module(OMSTREAM& o, const MODEL_SUBCKT* x)
+void LANG_SPICE_BASE::print_module(OMSTREAM& o, const BASE_SUBCKT* x)
 {
   assert(x);
   assert(x->subckt());
@@ -732,7 +736,7 @@ void LANG_SPICE_BASE::print_comment(OMSTREAM& o, const DEV_COMMENT* x)
 }
 /*--------------------------------------------------------------------------*/
 void LANG_SPICE_BASE::print_command(OMSTREAM& o, const DEV_DOT* x)
-{
+{untested();
   assert(x);
   o << x->s() << '\n';
 }
@@ -790,8 +794,7 @@ void LANG_SPICE_BASE::print_args(OMSTREAM& o, const COMPONENT* x)
 void LANG_SPICE_BASE::print_label(OMSTREAM& o, const COMPONENT* x)
 {
   assert(x);
-  std::string label = x->short_label();
-  o << label;
+  o << x->short_label();
 }
 /*--------------------------------------------------------------------------*/
 void LANG_SPICE_BASE::print_ports(OMSTREAM& o, const COMPONENT* x)
@@ -858,11 +861,12 @@ DISPATCHER<CMD>::INSTALL d1(&command_dispatcher, ".model", &p1);
 class CMD_SUBCKT : public CMD {
   void do_it(CS& cmd, CARD_LIST* Scope)
   {
-    MODEL_SUBCKT* new_module = new MODEL_SUBCKT;
+    BASE_SUBCKT* new_module = dynamic_cast<BASE_SUBCKT*>(device_dispatcher.clone("subckt"));
     assert(new_module);
     assert(!new_module->owner());
     assert(new_module->subckt());
     assert(new_module->subckt()->is_empty());
+    assert(!new_module->is_device());
     lang_spice.parse_module(cmd, new_module);
     Scope->push_back(new_module);
   }
@@ -962,7 +966,7 @@ DISPATCHER<CMD>::INSTALL d33(&command_dispatcher, ".lib|lib", &p33);
 class CMD_INCLUDE : public CMD {
 public:
   void do_it(CS& cmd, CARD_LIST* Scope)
-  {
+  {untested();
     getmerge(cmd, NO_HEADER, Scope);
   }
 } p3;
@@ -976,9 +980,7 @@ public:
   void do_it(CS& cmd, CARD_LIST* Scope)
   {untested();
     SET_RUN_MODE xx(rPRESET);
-      untested();
     getmerge(cmd, NO_HEADER, Scope);
-      untested();
   }
 } p4;
 DISPATCHER<CMD>::INSTALL d4(&command_dispatcher, ".merge|merge", &p4);
@@ -1029,7 +1031,7 @@ DISPATCHER<CMD>::INSTALL d6(&command_dispatcher, ".get|get", &p6);
 class CMD_BUILD : public CMD {
 public:
   void do_it(CS& cmd, CARD_LIST* Scope)
-  {
+  {untested();
     SET_RUN_MODE xx(rPRESET);
     ::status.get.reset().start();
     lang_spice.parse_module_body(cmd, NULL, Scope, ">", lang_spice.EXIT_ON_BLANK, ". ");
@@ -1050,7 +1052,7 @@ DISPATCHER<CMD>::INSTALL d8(&command_dispatcher, "spice", &p8);
 class CMD_ACS : public CMD {
 public:
   void do_it(CS&, CARD_LIST* Scope)
-  {
+  {untested();
     command("options lang=acs", Scope);
   }
 } p9;
@@ -1059,10 +1061,10 @@ DISPATCHER<CMD>::INSTALL d9(&command_dispatcher, "acs", &p9);
 class CMD_ENDC : public CMD {
 public:
   void do_it(CS&, CARD_LIST* Scope)
-  {
-    if (OPT::language == &lang_acs) {
+  {untested();
+    if (OPT::language == &lang_acs) {untested();
       command("options lang=spice", Scope);
-    }else{
+    }else{untested();
     }
   }
 } p88;
@@ -1071,10 +1073,10 @@ DISPATCHER<CMD>::INSTALL d88(&command_dispatcher, ".endc", &p88);
 class CMD_CONTROL : public CMD {
 public:
   void do_it(CS&, CARD_LIST* Scope)
-  {
-    if (OPT::language == &lang_spice) {
+  {untested();
+    if (OPT::language == &lang_spice) {untested();
       command("options lang=acs", Scope);
-    }else{
+    }else{untested();
     }
   }
 } p99;
@@ -1084,3 +1086,4 @@ DISPATCHER<CMD>::INSTALL d99(&command_dispatcher, ".control", &p99);
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

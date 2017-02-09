@@ -1,4 +1,4 @@
-/*$Id: e_card.cc 2014/07/04 al $ -*- C++ -*-
+/*$Id: e_card.cc 2016/09/17 $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -174,7 +174,7 @@ const CARD* CARD::find_looking_out(const std::string& name)const
     }else if (makes_own_scope()) {
       // probably a subckt or "module"
       CARD_LIST::const_iterator i = CARD_LIST::card_list.find_(name);
-      if (i != CARD_LIST::card_list.end()) {untested();
+      if (i != CARD_LIST::card_list.end()) {
 	return *i;
       }else{
 	throw;
@@ -192,22 +192,23 @@ TIME_PAIR CARD::tr_review()
 /*--------------------------------------------------------------------------*/
 void CARD::new_subckt()
 {
+  assert(!_subckt);
   delete _subckt;
+  _subckt = NULL;
   _subckt = new CARD_LIST;
 }
 /*--------------------------------------------------------------------------*/
-void CARD::new_subckt(const CARD* Model, CARD* Owner,
-		      const CARD_LIST* Scope, PARAM_LIST* Params)
+void CARD::new_subckt(const CARD* Model, PARAM_LIST* Params)
 {
   delete _subckt;
-  _subckt = new CARD_LIST(Model, Owner, Scope, Params);
+  _subckt = NULL;
+  _subckt = new CARD_LIST(Model, this, scope(), Params);
 }
 /*--------------------------------------------------------------------------*/
-void CARD::renew_subckt(const CARD* Model, CARD* Owner,
-		      const CARD_LIST* Scope, PARAM_LIST* Params)
+void CARD::renew_subckt(const CARD* Model, PARAM_LIST* Params)
 {
   if (_sim->is_first_expand()) {
-    new_subckt(Model, Owner, Scope, Params);
+    new_subckt(Model, Params);
   }else{untested();
     assert(subckt());
     subckt()->attach_params(Params, scope());
@@ -241,7 +242,7 @@ void CARD::set_param_by_name(std::string Name, std::string Value)
  */
 void CARD::set_dev_type(const std::string& New_Type)
 {
-  if (!Umatch(New_Type, dev_type() + ' ')) {untested();
+  if (!Umatch(New_Type, dev_type() + ' ')) {
     //throw Exception_Cant_Set_Type(dev_type(), New_Type);
   }else{
     // it matches -- ok.
@@ -259,3 +260,4 @@ bool CARD::evaluated()const
 }
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
+// vim:ts=8:sw=2:noet:

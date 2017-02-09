@@ -1,4 +1,4 @@
-/*$Id: u_lang.h,v 26.138 2013/04/24 02:32:27 al Exp $ -*- C++ -*-
+/*$Id: u_lang.h 2016/09/17 $ -*- C++ -*-
  * Copyright (C) 2006 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -21,23 +21,25 @@
  */
 #ifndef U_LANG_H
 #define U_LANG_H
+#include "e_base.h"
 #include "u_opt.h"
 /*--------------------------------------------------------------------------*/
 class COMPONENT;
-class MODEL_SUBCKT;
+class BASE_SUBCKT;
 class MODEL_CARD;
 class CARD;
 class DEV_COMMENT;
 class DEV_DOT;
 class CARD_LIST;
 /*--------------------------------------------------------------------------*/
-class INTERFACE LANGUAGE {
+class INTERFACE LANGUAGE : public CKT_BASE {
 public:
   const CARD* find_proto(const std::string&, const CARD*);
 public:
-  void new__instance(CS& cmd, MODEL_SUBCKT* owner, CARD_LIST* Scope);
+  void new__instance(CS& cmd, BASE_SUBCKT* owner, CARD_LIST* Scope);
 
 public:
+  //BUG//need constructors
   virtual ~LANGUAGE();
   virtual std::string name()const = 0;
   virtual bool case_insensitive()const = 0;
@@ -55,7 +57,7 @@ public: // called by commands and parse_item
   virtual DEV_COMMENT*	parse_comment(CS&, DEV_COMMENT*) = 0;
   virtual DEV_DOT*	parse_command(CS&, DEV_DOT*) = 0;
   virtual MODEL_CARD*	parse_paramset(CS&, MODEL_CARD*) = 0;
-  virtual MODEL_SUBCKT* parse_module(CS&, MODEL_SUBCKT*) = 0;
+  virtual BASE_SUBCKT*  parse_module(CS&, BASE_SUBCKT*) = 0;
   virtual COMPONENT*	parse_instance(CS&, COMPONENT*) = 0;
   virtual std::string	find_type_in_string(CS&) = 0;
 
@@ -64,7 +66,7 @@ public: // real public interface
   virtual void print_item(OMSTREAM&, const CARD*);
 private: // called by print_item
   virtual void print_paramset(OMSTREAM&, const MODEL_CARD*) = 0;
-  virtual void print_module(OMSTREAM&, const MODEL_SUBCKT*) = 0;
+  virtual void print_module(OMSTREAM&, const BASE_SUBCKT*) = 0;
   virtual void print_instance(OMSTREAM&, const COMPONENT*) = 0;
   virtual void print_comment(OMSTREAM&, const DEV_COMMENT*) = 0;
   virtual void print_command(OMSTREAM&, const DEV_DOT*) = 0;
@@ -92,3 +94,4 @@ void print_pair(OMSTREAM& o, LANGUAGE* lang, const std::string& name,
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 #endif
+// vim:ts=8:sw=2:noet:

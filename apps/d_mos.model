@@ -1,4 +1,4 @@
-/* $Id: d_mos.model,v 26.132 2009/11/24 04:26:37 al Exp $ -*- C++ -*-
+/* $Id: d_mos.model $ -*- C++ -*-
  * Copyright (C) 2001 Albert Davis
  * Author: Albert Davis <aldavis@gnu.org>
  *
@@ -83,7 +83,6 @@ device BUILT_IN_MOS {
       omit="!OPT::cstray || _n[n_g].n_() == _n[n_d].n_()";
     capacitor Cgb {g b} value="s->cgbo" eval=Cgb
       omit="!OPT::cstray || _n[n_b].n_() == _n[n_g].n_()";
-    /*
     fpoly_cap Cqgs {g is g b is b id b}
       state=qgs  // qgate, cgs, cggb, cgsb, cgdb
       omit="m->cmodel != 0 || !OPT::cstray 
@@ -107,7 +106,6 @@ device BUILT_IN_MOS {
       state=qbd
       omit="m->cmodel != 0 || !OPT::cstray 
              || _n[n_b].n_() == _n[n_id].n_()";
-    */
     cpoly_g Ids {id is  g is  id g
 		b is  id b} state=idsxxx;
     cpoly_g Idb {id b  id is  g is  b is}
@@ -573,7 +571,7 @@ bool DEV_BUILT_IN_MOS::do_tr()
     }else{
     }
     #if defined(DO_TRACE)
-      error(bTRACE,"%s:%d: region change\n", long_label().c_str(), evaliter());
+      error(bTRACE,"%s: region change\n", long_label().c_str());
     #endif
   }else{
   }
