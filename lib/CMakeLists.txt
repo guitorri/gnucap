@@ -1,4 +1,5 @@
 add_library(gnucap SHARED
+    globals.cc
     ap_construct.cc
     ap_convert.cc
     ap_error.cc
@@ -17,6 +18,7 @@ add_library(gnucap SHARED
     e_base.cc
     e_card.cc
     e_cardlist.cc
+    e_paramlist.cc
     e_ccsrc.cc
     e_compon.cc
     e_elemnt.cc
@@ -24,7 +26,6 @@ add_library(gnucap SHARED
     e_node.cc
     e_storag.cc
     findbr.cc
-    globals.cc
     io.cc
     io_contr.cc
     io_error.cc
