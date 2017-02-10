@@ -107,7 +107,7 @@ public:
   void do_it(CS& cmd, CARD_LIST*)
   {
     if (CARD_LIST::card_list.is_empty()) {
-      for (std::map<std::string, void*>::iterator
+      for (std::map<const std::string, void*>::iterator
 	     ii = attach_list.begin(); ii != attach_list.end(); ++ii) {
 	void* handle = ii->second;
 	if (handle) {
