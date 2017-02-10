@@ -6,7 +6,6 @@ install(FILES
     d_coment.h
     d_dot.h
     d_logic.h
-    d_subckt.h
     declare.h
     e_aux.h
     e_base.h
@@ -19,6 +18,7 @@ install(FILES
     e_node.h
     e_storag.h
     e_subckt.h
+    e_paramlist.h
     globals.h
     io_.h
     io_error.h
