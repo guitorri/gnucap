@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(gnucap)
 
 # Set project version information.
 set(VERSION "2013-04-23")
+
+set(CMAKE_CXX_STANDARD 11)
 
 # Set configuration options.
 option(DOCS "Build and install documentation" OFF)
