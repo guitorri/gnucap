@@ -25,6 +25,7 @@ echo "Running autoheader..."
 autoheader || exit 1
 
 echo "Running libtoolize"
+echo "libtoolize will suggest to edit Makefile.am. but there is no Makefile.am"
 $LIBTOOLIZE || exit 1
 
 echo "Running automake..."
