@@ -26,7 +26,9 @@
 #define MD_H_INCLUDED
 /*--------------------------------------------------------------------------*/
 /* autoconf stuff */
+#ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
 /*--------------------------------------------------------------------------*/
 /* std collection of includes */
 // system

@@ -1,1 +1,1 @@
-#define PATCHLEVEL "master 2017.10.03"
+#define PATCHLEVEL "cmake-2 2017.10.18"
