@@ -67,7 +67,7 @@ set(OTHER_SOURCES
 
 add_models(MODEL_SOURCES ${MODELS})
 
-add_library(gnucap-default-plugins SHARED
+add_library(gnucap-default-plugins MODULE
     ${D_SRCS}
     ${BM_SRCS}
     ${C_SRCS}
@@ -77,6 +77,10 @@ add_library(gnucap-default-plugins SHARED
     ${OTHER_SOURCES}
     ${MODEL_SOURCES}
 )
+
+if(APPLE)
+  set(CMAKE_MODULE_LINKER_FLAGS "-undefined dynamic_lookup")
+endif()
 
 install(TARGETS gnucap-default-plugins
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/gnucap")
