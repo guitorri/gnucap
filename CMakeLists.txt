@@ -53,6 +53,9 @@ endif()
 
 # TODO: Check for local modelgen if cross-compiling.
 
+# set GNUCAP_PLUGPATH
+set(pkglibdir "${CMAKE_INSTALL_FULL_LIBDIR}/gnucap")
+
 # Write configuration to header file.
 configure_file(
     "${PROJECT_SOURCE_DIR}/cmake/config.h.in"
