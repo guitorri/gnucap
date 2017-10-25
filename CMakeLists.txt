@@ -64,6 +64,7 @@ configure_file(
 
 # configure RPATH
 set(CMAKE_MACOSX_RPATH FALSE)  # don't use RPATH for MacOSX
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR}) # Linux set full path to library
 
 # Tell the compiler where to find the header files.
 include_directories(${PROJECT_BINARY_DIR})
