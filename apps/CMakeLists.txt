@@ -82,5 +82,7 @@ if(APPLE)
   set(CMAKE_MODULE_LINKER_FLAGS "-undefined dynamic_lookup")
 endif()
 
+set_target_properties(gnucap-default-plugins PROPERTIES PREFIX "")
+
 install(TARGETS gnucap-default-plugins
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/gnucap")
