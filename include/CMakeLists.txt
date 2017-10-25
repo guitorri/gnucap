@@ -43,6 +43,7 @@ install(FILES
     patchlev.h
     s__.h
     s_tr.h
+    spice-wrapper.cc
     trace_off.h
     trace_on.h
     u_cardst.h
