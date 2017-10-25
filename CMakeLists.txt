@@ -62,6 +62,9 @@ configure_file(
     "${PROJECT_BINARY_DIR}/config.h"
     )
 
+# configure RPATH
+set(CMAKE_MACOSX_RPATH FALSE)  # don't use RPATH for MacOSX
+
 # Tell the compiler where to find the header files.
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(include)

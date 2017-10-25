@@ -58,4 +58,6 @@ add_library(gnucap SHARED
 
 target_link_libraries(gnucap ${DL_LIBRARIES} ${READLINE_LIBS})
 
+set_target_properties(gnucap PROPERTIES INSTALL_NAME_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+
 install(TARGETS gnucap DESTINATION ${CMAKE_INSTALL_LIBDIR})
